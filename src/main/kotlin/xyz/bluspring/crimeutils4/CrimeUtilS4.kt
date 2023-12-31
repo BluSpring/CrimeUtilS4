@@ -15,8 +15,11 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -116,7 +119,16 @@ class CrimeUtilS4 : ModInitializer {
         @JvmField val PLAYER_ITEM_CHEST_BLOCK_ENTITY = registerBlockEntity("player_item_chest", FabricBlockEntityTypeBuilder.create(::PlayerItemChestBlockEntity, PLAYER_ITEM_CHEST_BLOCK).build())
         @JvmField val PLAYER_ITEM_CHEST_ITEM = registerItem("player_item_chest", BlockItem(PLAYER_ITEM_CHEST_BLOCK, Item.Properties()))
 
-        @JvmField val DOUBLOON_ITEM = registerItem("doubloon", Item(Item.Properties().rarity(Rarity.EPIC)))
+        @JvmField val DOUBLOON_ITEM = registerItem("doubloon", Item(Item.Properties().rarity(Rarity.EPIC).food(
+            FoodProperties.Builder()
+                .fast()
+                .effect(MobEffectInstance(MobEffects.DAMAGE_BOOST, 400, 1), 0.3f)
+                .effect(MobEffectInstance(MobEffects.INVISIBILITY, 400, 1), 0.3f)
+                .alwaysEat()
+                .nutrition(2)
+                .saturationMod(0.1f)
+                .build()
+        )))
 
         @JvmField val CREATIVE_TAB = register(BuiltInRegistries.CREATIVE_MODE_TAB, "tab",
             FabricItemGroup.builder()
