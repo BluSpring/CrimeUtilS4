@@ -4,6 +4,7 @@ import dev.architectury.event.EventResult
 import dev.architectury.event.events.common.InteractionEvent
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
 import net.minecraft.ChatFormatting
@@ -116,6 +117,17 @@ class CrimeUtilS4 : ModInitializer {
         @JvmField val PLAYER_ITEM_CHEST_ITEM = registerItem("player_item_chest", BlockItem(PLAYER_ITEM_CHEST_BLOCK, Item.Properties()))
 
         @JvmField val DOUBLOON_ITEM = registerItem("doubloon", Item(Item.Properties().rarity(Rarity.EPIC)))
+
+        @JvmField val CREATIVE_TAB = register(BuiltInRegistries.CREATIVE_MODE_TAB, "tab",
+            FabricItemGroup.builder()
+                .icon { ItemStack(DOUBLOON_ITEM) }
+                .title(Component.translatable("itemGroup.${MOD_ID}"))
+                .displayItems { ctx, entries ->
+                    entries.accept(PLAYER_ITEM_CHEST_ITEM)
+                    entries.accept(DOUBLOON_ITEM)
+                }
+                .build()
+        )
 
         private fun <T : Block> registerBlock(id: String, value: T): T {
             return register<Block, T>(BuiltInRegistries.BLOCK, id, value)
