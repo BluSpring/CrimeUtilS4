@@ -115,7 +115,7 @@ class CrimeUtilS4 : ModInitializer {
         @JvmField val PLAYER_ITEM_CHEST_BLOCK_ENTITY = registerBlockEntity("player_item_chest", FabricBlockEntityTypeBuilder.create(::PlayerItemChestBlockEntity, PLAYER_ITEM_CHEST_BLOCK).build())
         @JvmField val PLAYER_ITEM_CHEST_ITEM = registerItem("player_item_chest", BlockItem(PLAYER_ITEM_CHEST_BLOCK, Item.Properties()))
 
-        @JvmField val DOUBLOON_ITEM = registerItem("doubloon", Item(Item.Properties().rarity(Rarity.RARE)))
+        @JvmField val DOUBLOON_ITEM = registerItem("doubloon", Item(Item.Properties().rarity(Rarity.EPIC)))
 
         private fun <T : Block> registerBlock(id: String, value: T): T {
             return register<Block, T>(BuiltInRegistries.BLOCK, id, value)
