@@ -1,0 +1,32 @@
+{
+    "schemaVersion": 1,
+    "id": "crimeutils4",
+    "version": "${version}",
+    "name": "CrimeUtilS4",
+    "description": "Crimecraft S4 utility mod",
+    "authors": [
+        "BluSpring"
+    ],
+    "contact": {
+        "repo": "https://github.com/BluSpring/CrimeUtilS4"
+    },
+    "license": "MIT",
+    "icon": "assets/crimeutils4/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "client": [
+            "xyz.bluspring.crimeutils4.client.CrimeUtilS4Client"
+        ],
+        "main": [
+            "xyz.bluspring.crimeutils4.CrimeUtilS4"
+        ]
+    },
+    "mixins": [
+        "crimeutils4.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "fabric": "*",
+        "minecraft": "${minecraft_version}"
+    }
+}
