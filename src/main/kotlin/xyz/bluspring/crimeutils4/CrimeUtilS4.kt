@@ -126,7 +126,7 @@ class CrimeUtilS4 : ModInitializer {
     }
 
     companion object {
-        const val MOD_ID = "crimeutils"
+        const val MOD_ID = "crimecraft"
         val DEBUG = FabricLoader.getInstance().isDevelopmentEnvironment
 
         @JvmField val LOGGER: Logger = LoggerFactory.getLogger(CrimeUtilS4::class.java)

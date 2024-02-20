@@ -11,7 +11,7 @@
         "repo": "https://github.com/BluSpring/CrimeUtilS4"
     },
     "license": "MIT",
-    "icon": "assets/crimeutils4/icon.png",
+    "icon": "assets/crimecraft/icon.png",
     "environment": "*",
     "entrypoints": {
         "client": [
