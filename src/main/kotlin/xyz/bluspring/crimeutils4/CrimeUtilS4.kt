@@ -94,7 +94,7 @@ class CrimeUtilS4 : ModInitializer {
         val pos = BlockPos.MutableBlockPos()
         pos.set(blockPos)
 
-        while (!level.getBlockState(pos).isAir) {
+        while (level.getBlockState(pos).liquid()) {
             if (pos.y >= level.maxBuildHeight) {
                 pos.y = level.maxBuildHeight
                 break
@@ -104,6 +104,21 @@ class CrimeUtilS4 : ModInitializer {
             }
 
             pos.y += 1
+        }
+
+        if (!level.getBlockState(pos).isAir) {
+            while (level.getBlockState(pos).hasBlockEntity()) {
+                pos.y += 1
+                if (pos.y >= level.maxBuildHeight) {
+                    pos.y = level.maxBuildHeight
+                    break
+                } else if (pos.y <= level.minBuildHeight) {
+                    pos.y = level.minBuildHeight
+                    break
+                }
+            }
+
+            level.destroyBlock(pos, true)
         }
 
         return pos
