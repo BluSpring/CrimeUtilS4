@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.Commands
 import net.minecraft.core.BlockPos
@@ -126,7 +127,7 @@ class CrimeUtilS4 : ModInitializer {
 
     companion object {
         const val MOD_ID = "crimeutils"
-        const val DEBUG = true
+        val DEBUG = FabricLoader.getInstance().isDevelopmentEnvironment
 
         @JvmField val LOGGER: Logger = LoggerFactory.getLogger(CrimeUtilS4::class.java)
 
