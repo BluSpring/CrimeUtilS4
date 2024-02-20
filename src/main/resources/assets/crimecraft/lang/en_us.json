@@ -1,5 +1,8 @@
 {
-    "block.crimeutils.player_item_chest": "Player Items Chest",
-    "item.crimeutils.doubloon": "Doubloon",
-    "itemGroup.crimeutils": "Crimecraft S4"
+    "block.crimecraft.player_item_chest": "Player Items Chest",
+    "item.crimecraft.doubloon": "Doubloon",
+    "itemGroup.crimecraft": "Crimecraft S4",
+    "block.crimecraft.big_red_button": "Big Red Button",
+    "subtitle.crimecraft.one_piece": "Finn does the thing again",
+    "subtitle.block.big_red_button.press": "Button pressed... uh oh"
 }

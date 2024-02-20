@@ -16,6 +16,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.player.Inventory
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.EnderChestBlock
 import net.minecraft.world.level.block.entity.BlockEntityType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import xyz.bluspring.crimeutils4.block.BigRedButtonBlock
 import xyz.bluspring.crimeutils4.block.PlayerItemChestBlock
 import xyz.bluspring.crimeutils4.block.entity.PlayerItemChestBlockEntity
 
@@ -146,6 +148,18 @@ class CrimeUtilS4 : ModInitializer {
                 .build()
         )))
 
+        @JvmField val BIG_RED_BUTTON_BLOCK = registerBlock("big_red_button", BigRedButtonBlock())
+        @JvmField val BIG_RED_BUTTON_ITEM = registerItem("big_red_button", BlockItem(
+            BIG_RED_BUTTON_BLOCK, Item.Properties().stacksTo(64)
+        ))
+
+        @JvmField val ONE_PIECE = SoundEvent.createVariableRangeEvent(ResourceLocation(MOD_ID, "crimecraft.one_piece")).apply {
+            Registry.register(BuiltInRegistries.SOUND_EVENT, this.location, this)
+        }
+        @JvmField val BIG_RED_BUTTON_PRESS = SoundEvent.createVariableRangeEvent(ResourceLocation(MOD_ID, "block.big_red_button.press")).apply {
+            Registry.register(BuiltInRegistries.SOUND_EVENT, this.location, this)
+        }
+
         @JvmField val CREATIVE_TAB = register(BuiltInRegistries.CREATIVE_MODE_TAB, "tab",
             FabricItemGroup.builder()
                 .icon { ItemStack(DOUBLOON_ITEM) }
@@ -153,6 +167,7 @@ class CrimeUtilS4 : ModInitializer {
                 .displayItems { ctx, entries ->
                     entries.accept(PLAYER_ITEM_CHEST_ITEM)
                     entries.accept(DOUBLOON_ITEM)
+                    entries.accept(BIG_RED_BUTTON_ITEM)
                 }
                 .build()
         )

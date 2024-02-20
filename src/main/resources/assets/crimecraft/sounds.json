@@ -1,0 +1,21 @@
+{
+    "crimecraft.one_piece": {
+        "sounds": [
+            {
+                "name": "crimecraft:one_piece",
+                "stream": true,
+                "volume": 0.7
+            }
+        ],
+        "subtitle": "subtitle.crimecraft.one_piece"
+    },
+    "block.big_red_button.press": {
+        "sounds": [
+            {
+                "name": "crimecraft:big_red_button/press",
+                "volume": 0.6
+            }
+        ],
+        "subtitle": "subtitle.block.big_red_button.press"
+    }
+}
