@@ -12,7 +12,7 @@ import xyz.bluspring.crimeutils4.CrimeUtilS4
 import xyz.bluspring.crimeutils4.block.entity.PlayerItemChestBlockEntity
 import java.util.function.Supplier
 
-class PlayerItemChestBlock : ChestBlock(Properties.ofFullCopy(Blocks.CHEST), Supplier { CrimeUtilS4.PLAYER_ITEM_CHEST_BLOCK_ENTITY }) {
+class PlayerItemChestBlock : ChestBlock(Properties.copy(Blocks.CHEST), Supplier { CrimeUtilS4.PLAYER_ITEM_CHEST_BLOCK_ENTITY }) {
     override fun newBlockEntity(blockPos: BlockPos, blockState: BlockState): BlockEntity {
         return PlayerItemChestBlockEntity(blockPos, blockState)
     }

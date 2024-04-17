@@ -7,8 +7,9 @@ import net.minecraft.world.level.block.state.properties.BlockSetType
 import xyz.bluspring.crimeutils4.CrimeUtilS4
 
 class BigRedButtonBlock : ButtonBlock(
+    Properties.copy(Blocks.STONE_BUTTON),
     BlockSetType.STONE,
-    35, Properties.ofFullCopy(Blocks.STONE_BUTTON)
+    35, false
 ) {
     override fun getSound(isOn: Boolean): SoundEvent {
         return if (isOn)
