@@ -23,7 +23,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:1.10.17+kotlin.1.9.22"
 
-    modApi "dev.architectury:architectury-fabric:11.0.9"
+    modApi "dev.architectury:architectury-fabric:9.2.14"
 }
 
 processResources {
