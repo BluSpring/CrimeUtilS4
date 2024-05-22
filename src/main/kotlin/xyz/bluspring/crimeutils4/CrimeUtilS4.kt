@@ -26,6 +26,7 @@ import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
+import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.EnderChestBlock
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -74,13 +75,20 @@ class CrimeUtilS4 : ModInitializer {
         val state = PLAYER_ITEM_CHEST_BLOCK.defaultBlockState()
         level.setBlockAndUpdate(pos, state)
         level.setBlockEntity(PLAYER_ITEM_CHEST_BLOCK_ENTITY.create(pos, state)!!.apply {
-            for ((index, itemStack) in inventory.items.withIndex()) {
-                this.setItem(index, itemStack)
+            fun setNonVanishingItem(index: Int, stack: ItemStack) {
+                if (EnchantmentHelper.hasVanishingCurse(stack))
+                    return
+
+                this.setItem(index, stack)
             }
 
-            this.setItem(36, inventory.offhand.firstOrNull() ?: ItemStack.EMPTY)
+            for ((index, itemStack) in inventory.items.withIndex()) {
+                setNonVanishingItem(index, itemStack)
+            }
+
+            setNonVanishingItem(36, inventory.offhand.firstOrNull() ?: ItemStack.EMPTY)
             for ((index, itemStack) in inventory.armor.withIndex()) {
-                this.setItem(37 + index, itemStack)
+                setNonVanishingItem(37 + index, itemStack)
             }
 
             this.customName = Component.empty()
