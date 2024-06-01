@@ -11,6 +11,14 @@ repositories {
     maven {
         url "https://maven.architectury.dev/"
     }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
+        name = "Ladysnake Libs"
+        url = 'https://maven.ladysnake.org/releases'
+    }
 }
 
 dependencies {
@@ -24,6 +32,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:1.10.17+kotlin.1.9.22"
 
     modApi "dev.architectury:architectury-fabric:9.2.14"
+    modApi "dev.emi:trinkets:3.7.1"
 }
 
 processResources {

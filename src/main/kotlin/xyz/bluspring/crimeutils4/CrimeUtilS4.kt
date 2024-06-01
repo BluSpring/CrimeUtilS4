@@ -8,6 +8,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import dev.architectury.event.EventResult
 import dev.architectury.event.events.common.EntityEvent
 import dev.architectury.event.events.common.InteractionEvent
+import dev.emi.trinkets.api.TrinketsApi
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
@@ -181,13 +182,6 @@ class CrimeUtilS4 : ModInitializer {
         val state = PLAYER_ITEM_CHEST_BLOCK.defaultBlockState()
         level.setBlockAndUpdate(pos, state)
         level.setBlockEntity(PLAYER_ITEM_CHEST_BLOCK_ENTITY.create(pos, state)!!.apply {
-            fun setNonVanishingItem(index: Int, stack: ItemStack) {
-                if (EnchantmentHelper.hasVanishingCurse(stack))
-                    return
-
-                this.setItem(index, stack)
-            }
-
             for ((index, itemStack) in inventory.items.withIndex()) {
                 setNonVanishingItem(index, itemStack)
             }
@@ -195,6 +189,10 @@ class CrimeUtilS4 : ModInitializer {
             setNonVanishingItem(36, inventory.offhand.firstOrNull() ?: ItemStack.EMPTY)
             for ((index, itemStack) in inventory.armor.withIndex()) {
                 setNonVanishingItem(37 + index, itemStack)
+            }
+
+            if (FabricLoader.getInstance().isModLoaded("trinkets")) {
+                addTrinketsItems(40, player)
             }
 
             this.customName = Component.empty()
@@ -205,6 +203,24 @@ class CrimeUtilS4 : ModInitializer {
         inventory.clearContent()
 
         LOGGER.info("Placed ${player.name.string}'s items chest at ${pos.toShortString()}")
+    }
+
+    private fun PlayerItemChestBlockEntity.addTrinketsItems(startIndex: Int, player: Player) {
+        TrinketsApi.getTrinketComponent(player).ifPresent {
+            var current = 0
+            it.forEach { _, stack ->
+                setNonVanishingItem(startIndex + current, stack)
+
+                current += 1
+            }
+        }
+    }
+
+    private fun PlayerItemChestBlockEntity.setNonVanishingItem(index: Int, stack: ItemStack) {
+        if (EnchantmentHelper.hasVanishingCurse(stack))
+            return
+
+        this.setItem(index, stack)
     }
 
     private fun searchForFreePos(level: ServerLevel, blockPos: BlockPos): BlockPos {
