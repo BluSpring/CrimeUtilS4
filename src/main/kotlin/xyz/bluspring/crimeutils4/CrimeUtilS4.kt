@@ -165,6 +165,12 @@ class CrimeUtilS4 : ModInitializer {
                 }
             }
 
+            if (blockEntity != null && blockEntity is PlayerItemChestBlockEntity && blockEntity.isUnbreakable) {
+                player.sendSystemMessage(Component.literal("That block is protected!")
+                    .withStyle(ChatFormatting.RED))
+                return@register false
+            }
+
             true
         }
     }
