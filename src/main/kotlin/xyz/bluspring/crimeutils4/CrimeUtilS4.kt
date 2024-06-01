@@ -1,16 +1,23 @@
 package xyz.bluspring.crimeutils4
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import dev.architectury.event.EventResult
 import dev.architectury.event.events.common.EntityEvent
 import dev.architectury.event.events.common.InteractionEvent
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.Commands
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -32,14 +39,26 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.EnderChestBlock
 import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.Vec3
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import xyz.bluspring.crimeutils4.block.BigRedButtonBlock
 import xyz.bluspring.crimeutils4.block.PlayerItemChestBlock
 import xyz.bluspring.crimeutils4.block.entity.PlayerItemChestBlockEntity
+import java.io.File
 
 class CrimeUtilS4 : ModInitializer {
+    private val logger = LoggerFactory.getLogger("CrimeUtils")
+    val gson = GsonBuilder().setPrettyPrinting().create()
+
+    val protFile = File(FabricLoader.getInstance().configDir.toFile(), "crimeutils_prot.json")
+    val protectedAreas = mutableListOf<AABB>()
+    var isProtectionEnabled = false
+
     override fun onInitialize() {
+        loadProtFile()
+
         ServerPlayConnectionEvents.DISCONNECT.register { handler, server ->
             if (!handler.player.inventory.isEmpty)
                 placeInventoryChest(handler.player.inventory, handler.player, searchForFreePos(handler.player.serverLevel(), handler.player.blockPosition()))
@@ -57,6 +76,63 @@ class CrimeUtilS4 : ModInitializer {
                         }
                 )
             }
+
+            dispatcher.register(
+                Commands.literal("areaprot")
+                    .requires { it.hasPermission(3) }
+                    .then(
+                        Commands.literal("toggle")
+                            .executes {
+                                isProtectionEnabled = !isProtectionEnabled
+                                it.source.sendSystemMessage(Component.literal("Toggled block protection area status to ${isProtectionEnabled}."))
+
+                                saveProtFile()
+
+                                1
+                            }
+                    )
+                    .then(
+                        Commands.literal("add")
+                            .then(
+                                Commands.argument("pos1", BlockPosArgument.blockPos())
+                                    .then(
+                                        Commands.argument("pos2", BlockPosArgument.blockPos())
+                                            .executes {
+                                                val pos1 = BlockPosArgument.getLoadedBlockPos(it, "pos1")
+                                                val pos2 = BlockPosArgument.getLoadedBlockPos(it, "pos2")
+
+                                                val area = AABB(pos1, pos2).inflate(0.5)
+
+                                                this.protectedAreas.add(area)
+                                                it.source.sendSystemMessage(Component.literal("Added protected area from [${area.minX}, ${area.minY}, ${area.minZ}] to [${area.maxX}, ${area.maxY}, ${area.maxZ}] under index ${this.protectedAreas.size - 1}."))
+
+                                                saveProtFile()
+
+                                                1
+                                            }
+                                    )
+                            )
+                    )
+                    .then(
+                        Commands.literal("remove")
+                            .then(
+                                Commands.argument("index", IntegerArgumentType.integer(0))
+                                    .executes {
+                                        val index = IntegerArgumentType.getInteger(it, "index")
+
+                                        if (index >= this.protectedAreas.size) {
+                                            it.source.sendFailure(Component.literal("Index is out of range of a max ${this.protectedAreas.size - 1}!"))
+                                            return@executes 0
+                                        }
+
+                                        val removed = this.protectedAreas.removeAt(index)
+                                        it.source.sendSystemMessage(Component.literal("Removed protected area from [${removed.minX}, ${removed.minY}, ${removed.minZ}] to [${removed.maxX}, ${removed.maxY}, ${removed.maxZ}]."))
+
+                                        1
+                                    }
+                            )
+                    )
+            )
         }
 
         InteractionEvent.RIGHT_CLICK_BLOCK.register { player, hand, pos, direction ->
@@ -76,6 +152,20 @@ class CrimeUtilS4 : ModInitializer {
             }
 
             EventResult.pass()
+        }
+
+        PlayerBlockBreakEvents.BEFORE.register { level, player, pos, state, blockEntity ->
+            if (isProtectionEnabled) {
+                for (area in this.protectedAreas) {
+                    if (area.contains(Vec3.atCenterOf(pos))) {
+                        player.sendSystemMessage(Component.literal("That block is protected!")
+                            .withStyle(ChatFormatting.RED))
+                        return@register false
+                    }
+                }
+            }
+
+            true
         }
     }
 
@@ -143,6 +233,61 @@ class CrimeUtilS4 : ModInitializer {
         }
 
         return pos
+    }
+
+    private fun saveProtFile() {
+        if (!protFile.exists())
+            protFile.createNewFile()
+
+        val json = JsonObject()
+
+        json.addProperty("enabled", this.isProtectionEnabled)
+
+        val arr = JsonArray()
+        for (area in this.protectedAreas) {
+            val posList = JsonArray()
+            posList.add(JsonObject().apply {
+                this.addProperty("x", area.minX)
+                this.addProperty("y", area.minY)
+                this.addProperty("z", area.minZ)
+            })
+            posList.add(JsonObject().apply {
+                this.addProperty("x", area.maxX)
+                this.addProperty("y", area.maxY)
+                this.addProperty("z", area.maxZ)
+            })
+
+            arr.add(posList)
+        }
+
+        json.add("areas", arr)
+
+        protFile.writeText(gson.toJson(json))
+    }
+
+    private fun loadProtFile() {
+        if (!protFile.exists())
+            return
+
+        try {
+            val json = JsonParser.parseString(protFile.readText()).asJsonObject
+
+            this.isProtectionEnabled = json.get("enabled").asBoolean
+
+            json.getAsJsonArray("areas").forEach {
+                val area = it.asJsonArray
+
+                val pos1 = area.get(0).asJsonObject
+                val pos2 = area.get(1).asJsonObject
+
+                val boundingBox = AABB(pos1.get("x").asDouble, pos1.get("y").asDouble, pos1.get("z").asDouble, pos2.get("x").asDouble, pos2.get("y").asDouble, pos2.get("z").asDouble)
+
+                this.protectedAreas.add(boundingBox)
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to load protections file!")
+            e.printStackTrace()
+        }
     }
 
     companion object {
