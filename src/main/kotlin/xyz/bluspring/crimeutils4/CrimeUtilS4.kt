@@ -1,6 +1,7 @@
 package xyz.bluspring.crimeutils4
 
 import dev.architectury.event.EventResult
+import dev.architectury.event.events.common.EntityEvent
 import dev.architectury.event.events.common.InteractionEvent
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -16,6 +17,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
@@ -63,6 +65,14 @@ class CrimeUtilS4 : ModInitializer {
             if (state.block is EnderChestBlock) {
                 player.displayClientMessage(Component.literal("You're not allowed to use that block!").withStyle(ChatFormatting.RED), true)
                 return@register EventResult.interruptFalse()
+            }
+
+            EventResult.pass()
+        }
+
+        EntityEvent.LIVING_DEATH.register { entity, source ->
+            if (entity is ServerPlayer) {
+                placeInventoryChest(entity.inventory, entity, entity.blockPosition())
             }
 
             EventResult.pass()
