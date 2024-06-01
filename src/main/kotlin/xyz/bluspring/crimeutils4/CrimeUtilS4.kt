@@ -9,15 +9,12 @@ import dev.architectury.event.EventResult
 import dev.architectury.event.events.common.EntityEvent
 import dev.architectury.event.events.common.InteractionEvent
 import dev.emi.trinkets.TrinketPlayerScreenHandler
-import dev.emi.trinkets.TrinketsNetwork
 import dev.emi.trinkets.api.TrinketsApi
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.ChatFormatting
@@ -26,7 +23,6 @@ import net.minecraft.commands.arguments.coordinates.BlockPosArgument
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
@@ -71,25 +67,6 @@ class CrimeUtilS4 : ModInitializer {
                 it.update()
             }
             TrinketsApi.getPlayerSlots(handler.player).clear()
-
-            val player = handler.player
-
-            (player.inventoryMenu as TrinketPlayerScreenHandler).`trinkets$updateTrinketSlots`(true)
-            TrinketsApi.getTrinketComponent(player).ifPresent { trinkets ->
-                val buf = PacketByteBufs.create()
-                buf.writeInt(player.id)
-
-                val tag = CompoundTag()
-                val inventoriesToSend = trinkets.trackingUpdates
-                inventoriesToSend.clear()
-
-                buf.writeNbt(tag)
-                buf.writeNbt(CompoundTag())
-                ServerPlayNetworking.send(player, TrinketsNetwork.SYNC_INVENTORY, buf)
-                inventoriesToSend.clear()
-            }
-
-            handler.player.syncComponent(TrinketsApi.TRINKET_COMPONENT)
         }
 
         ServerPlayConnectionEvents.DISCONNECT.register { handler, server ->
