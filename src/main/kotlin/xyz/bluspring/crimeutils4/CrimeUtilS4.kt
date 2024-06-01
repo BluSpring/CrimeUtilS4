@@ -65,6 +65,9 @@ class CrimeUtilS4 : ModInitializer {
                 it.inventory.clear()
                 it.update()
             }
+            TrinketsApi.getPlayerSlots(handler.player).clear()
+
+            handler.player.syncComponent(TrinketsApi.TRINKET_COMPONENT)
         }
 
         ServerPlayConnectionEvents.DISCONNECT.register { handler, server ->
