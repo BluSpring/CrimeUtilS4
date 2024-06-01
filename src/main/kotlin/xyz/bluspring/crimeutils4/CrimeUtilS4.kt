@@ -210,10 +210,10 @@ class CrimeUtilS4 : ModInitializer {
             var current = 0
             it.forEach { _, stack ->
                 setNonVanishingItem(startIndex + current, stack.copy())
-                stack.count = 0
-
                 current += 1
             }
+
+            it.inventory.clear()
 
             it.update()
         }
