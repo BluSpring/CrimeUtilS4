@@ -214,6 +214,8 @@ class CrimeUtilS4 : ModInitializer {
 
                 current += 1
             }
+
+            it.update()
         }
     }
 
