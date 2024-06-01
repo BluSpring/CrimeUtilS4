@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory
 import xyz.bluspring.crimeutils4.block.BigRedButtonBlock
 import xyz.bluspring.crimeutils4.block.PlayerItemChestBlock
 import xyz.bluspring.crimeutils4.block.entity.PlayerItemChestBlockEntity
+import xyz.bluspring.crimeutils4.mixin.PlayerListAccessor
 import java.io.File
 
 class CrimeUtilS4 : ModInitializer {
@@ -204,6 +205,7 @@ class CrimeUtilS4 : ModInitializer {
         })
 
         inventory.clearContent()
+        ((player as ServerPlayer).server.playerList as PlayerListAccessor).callSave(player)
 
         LOGGER.info("Placed ${player.name.string}'s items chest at ${pos.toShortString()}")
     }
