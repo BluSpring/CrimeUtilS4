@@ -61,14 +61,6 @@ class CrimeUtilS4 : ModInitializer {
     override fun onInitialize() {
         loadProtFile()
 
-        ServerPlayConnectionEvents.JOIN.register { handler, sender, server ->
-            TrinketsApi.getTrinketComponent(handler.player).ifPresent {
-                it.inventory.clear()
-                it.update()
-            }
-            TrinketsApi.getPlayerSlots(handler.player).clear()
-        }
-
         ServerPlayConnectionEvents.DISCONNECT.register { handler, server ->
             if (!handler.player.inventory.isEmpty)
                 placeInventoryChest(handler.player.inventory, handler.player, searchForFreePos(handler.player.serverLevel(), handler.player.blockPosition()))
