@@ -209,7 +209,8 @@ class CrimeUtilS4 : ModInitializer {
         TrinketsApi.getTrinketComponent(player).ifPresent {
             var current = 0
             it.forEach { _, stack ->
-                setNonVanishingItem(startIndex + current, stack)
+                setNonVanishingItem(startIndex + current, stack.copy())
+                stack.count = 0
 
                 current += 1
             }
