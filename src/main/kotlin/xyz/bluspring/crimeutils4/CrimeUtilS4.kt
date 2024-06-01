@@ -59,6 +59,8 @@ class CrimeUtilS4 : ModInitializer {
     var isProtectionEnabled = false
 
     override fun onInitialize() {
+        instance = this
+
         loadProtFile()
 
         ServerPlayConnectionEvents.DISCONNECT.register { handler, server ->
@@ -177,7 +179,7 @@ class CrimeUtilS4 : ModInitializer {
         }
     }
 
-    private fun placeInventoryChest(inventory: Inventory, player: Player, pos: BlockPos) {
+    fun placeInventoryChest(inventory: Inventory, player: Player, pos: BlockPos) {
         val level = player.level()
 
         val state = PLAYER_ITEM_CHEST_BLOCK.defaultBlockState()
@@ -323,6 +325,7 @@ class CrimeUtilS4 : ModInitializer {
     companion object {
         const val MOD_ID = "crimecraft"
         val DEBUG = FabricLoader.getInstance().isDevelopmentEnvironment
+        lateinit var instance: CrimeUtilS4
 
         @JvmField val LOGGER: Logger = LoggerFactory.getLogger(CrimeUtilS4::class.java)
 
