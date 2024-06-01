@@ -246,8 +246,12 @@ class CrimeUtilS4 : ModInitializer {
             }
 
             it.inventory.clear()
+            it.groups.clear()
+            it.trackingUpdates.clear()
+            it.allEquipped.clear()
 
             it.update()
+            (player.inventoryMenu as TrinketPlayerScreenHandler).`trinkets$updateTrinketSlots`(true)
         }
     }
 
