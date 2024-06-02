@@ -367,7 +367,7 @@ class CrimeUtilS4 : ModInitializer {
                     entries.accept(DOUBLOON_ITEM)
                     entries.accept(BIG_RED_BUTTON_ITEM)
                 }
-                .build()
+                .build()!!
         )
 
         private fun <T : Block> registerBlock(id: String, value: T): T {
