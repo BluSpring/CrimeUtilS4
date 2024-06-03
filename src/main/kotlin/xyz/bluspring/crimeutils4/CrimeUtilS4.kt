@@ -24,6 +24,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentUtils
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -137,6 +138,43 @@ class CrimeUtilS4 : ModInitializer {
                                     }
                             )
                     )
+            )
+
+            dispatcher.register(
+                Commands.literal("leaderboard")
+                    .requires { it.hasPermission(2) }
+                    .executes { ctx ->
+                        val playerToDoubloonMap = mutableMapOf<ServerPlayer, Int>()
+
+                        for (player in ctx.source.server.playerList.players) {
+                            playerToDoubloonMap[player] =
+                                player.inventory.items
+                                    .filter { it.`is`(DOUBLOON_ITEM) }
+                                    .sumOf { it.count } +
+                                player.inventory.offhand
+                                    .filter { it.`is`(DOUBLOON_ITEM) }
+                                    .sumOf { it.count }
+                        }
+
+                        val sorted = playerToDoubloonMap.toList()
+                            .sortedByDescending { it.second }
+
+                        val components = mutableListOf<Component>()
+                        for ((index, pair) in sorted.withIndex()) {
+                            components.add(
+                                Component.literal("${index + 1}. ")
+                                    .append(pair.first.displayName)
+                                    .append(" - ${pair.second}")
+                            )
+                        }
+
+                        ctx.source.sendSystemMessage(
+                            Component.literal("Current Doubloon Leaderboard:")
+                                .append(ComponentUtils.formatList(components, Component.literal("\n")))
+                        )
+
+                        1
+                    }
             )
         }
 
