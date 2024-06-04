@@ -234,7 +234,7 @@ class CrimeUtilS4 : ModInitializer {
             }
 
             if (FabricLoader.getInstance().isModLoaded("trinkets")) {
-                addTrinketsItems(40, player)
+                addTrinketsItems(41, player)
             }
 
             this.customName = Component.empty()
