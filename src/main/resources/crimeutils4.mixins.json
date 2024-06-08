@@ -10,6 +10,7 @@
         "TamableAnimalMixin"
     ],
     "client": [
+        "EntityRenderDispatcherMixin",
         "SheetsMixin"
     ],
     "injectors": {

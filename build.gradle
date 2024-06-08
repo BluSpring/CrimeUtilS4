@@ -19,6 +19,15 @@ repositories {
         name = "Ladysnake Libs"
         url = 'https://maven.ladysnake.org/releases'
     }
+    maven {
+        url "https://jitpack.io"
+    }
+    maven {
+        url "https://maven.jamieswhiteshirt.com/libs-release"
+        content {
+            includeGroup "com.jamieswhiteshirt"
+        }
+    }
 }
 
 dependencies {
@@ -33,6 +42,9 @@ dependencies {
 
     modApi "dev.architectury:architectury-fabric:9.2.14"
     modApi "dev.emi:trinkets:3.7.1"
+
+    modImplementation "com.github.apace100:origins-fabric:v${project.origins_version}"
+    modImplementation "com.github.apace100:apoli:v${project.apoli_version}"
 }
 
 processResources {
